@@ -1,3 +1,4 @@
+import 'express-async-errors'
 import express, { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
@@ -40,6 +41,9 @@ const loggingMiddleware = morgan(
 
 app.use(loggingMiddleware);
 
+// Add auth router
+app.use('/', authRouter);
+
 // Bad route handler
 app.use((
   err: Error,
@@ -54,9 +58,6 @@ app.use((
   }
   return res.status(status).json({ error: err.message });
 });
-
-// Add auth router
-app.use('/', authRouter);
 
 app.listen({ port: 8000 }, () =>
   logger.info(`Server ready at http://localhost:${port}`)
