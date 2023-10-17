@@ -12,7 +12,12 @@ import authRouter from './router/auth';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 8000;
+const port = () => {
+  if (process.env.NODE_ENV === 'development') {
+    return 8000;
+  }
+  return 8080;
+};
 
 // Basic middlewares for all Routes 
 app.use(express.json());
@@ -59,6 +64,6 @@ app.use((
   return res.status(status).json({ error: err.message });
 });
 
-app.listen({ port: 8000 }, () =>
-  logger.info(`Server ready at http://localhost:${port}`)
+app.listen({ port: port() }, () =>
+  logger.info(`Server ready at http://localhost:${port()}`)
 );
