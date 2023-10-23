@@ -29,7 +29,7 @@ jobs:
 
       - name: Insert SQL connection string
         run: |
-          echo ${{ secrets.PLANETSQL }} >> ./env
+          echo ${{ secrets.PLANETSQL }} >> ./.env
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
