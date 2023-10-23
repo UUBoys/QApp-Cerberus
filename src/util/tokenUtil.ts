@@ -4,8 +4,11 @@ import path from "path";
 
 interface JWTPayload {
     id: number;
+    firstName: string;
+    lastName: string;
     email: string;
     username: string;
+    role: string;
 }
 
 const signOptions: jwt.SignOptions = {
@@ -19,8 +22,11 @@ const signOptions: jwt.SignOptions = {
 const privateKey = fs.readFileSync(path.resolve(__dirname, '../../keys/private.key'), "utf8");
 const publicKey = fs.readFileSync(path.resolve(__dirname, '../../keys/public.key'), "utf8");
 
-export const generateToken = (payload: JWTPayload) => {
-  return jwt.sign(payload, privateKey, signOptions);
+export const generateToken = (payload: JWTPayload, expiration?: number) => {
+    return jwt.sign(payload, privateKey, {
+    ...signOptions,
+    expiresIn: expiration ? Math.round(expiration - (new Date().getTime() / 1000)) : signOptions.expiresIn,
+  });
 };
 
 export const verifyToken = (token: string) => {

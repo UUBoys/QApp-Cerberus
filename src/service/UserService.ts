@@ -1,12 +1,19 @@
 import { prisma } from "@src/db/client";
 
-const createUser = async (email: string, username: string, password: string) => {
+type UserRole = "USER" | "MANAGER" | "DJ" | "ADMIN";
+
+interface ICreateUserParams {
+    email: string
+    username: string
+    firstName: string
+    lastName: string
+    password: string,
+    role: UserRole
+}
+
+const createUser = async (user: ICreateUserParams) => {
     return await prisma.user.create({
-        data: {
-            email,
-            name: username,
-            password,
-        },
+        data: user,
     });
 };
 
