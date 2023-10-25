@@ -75,8 +75,8 @@ async function main() {
     {
       http2: true,
       https: {
-        key: readFileSync(path.resolve(__dirname, 'localhost+2-key.pem'), "utf8"),
-        cert: readFileSync(path.resolve(__dirname, "localhost+2.pem"), "utf8"),
+        key: readFileSync(path.resolve(__dirname, '../keys/localhost+2-key.pem'), "utf8"),
+        cert: readFileSync(path.resolve(__dirname, "../keys/localhost+2.pem"), "utf8"),
       }
     }
   );
