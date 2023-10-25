@@ -70,14 +70,15 @@ app.use((
   return res.status(status).json({ error: err.message });
 });
 
+app.listen(port(), () => {
+  logger.info(`Normie server running at ${port()}`);
+});
+
 async function main() {
   const server = fastify(
     {
       http2: true,
-      https: {
-        key: readFileSync(path.resolve(__dirname, '../keys/localhost+2-key.pem'), "utf8"),
-        cert: readFileSync(path.resolve(__dirname, "../keys/localhost+2.pem"), "utf8"),
-      }
+      logger: true,
     }
   );
   await server.register(fastifyConnectPlugin, {
@@ -87,8 +88,8 @@ async function main() {
     reply.type("text/plain");
     reply.send("Hello World!");
   });
-  await server.listen({ host: "0.0.0.0", port: port() });
-  logger.info("server is listening at", server.addresses());
+  await server.listen({ host: "0.0.0.0", port: 5243 });
+  logger.info("gRPC server is listening at", server.addresses());
 }
 
 void main();
