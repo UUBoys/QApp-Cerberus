@@ -8,6 +8,8 @@ import HttpStatusCodes from './constants/HttpStatusCodes';
 import { RouteError } from './constants/RouteError';
 import authRouter from './router/auth';
 
+import { readFileSync } from "fs";
+import path from "path";
 import { fastify } from "fastify";
 import { fastifyConnectPlugin } from "@connectrpc/connect-fastify";
 import routes from "./grpc/connect";
@@ -72,6 +74,10 @@ async function main() {
   const server = fastify(
     {
       http2: true,
+      https: {
+        key: readFileSync(path.resolve(__dirname, 'localhost+2-key.pem'), "utf8"),
+        cert: readFileSync(path.resolve(__dirname, "localhost+2.pem"), "utf8"),
+      }
     }
   );
   await server.register(fastifyConnectPlugin, {
