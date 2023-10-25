@@ -8,6 +8,10 @@ import HttpStatusCodes from './constants/HttpStatusCodes';
 import { RouteError } from './constants/RouteError';
 import authRouter from './router/auth';
 
+import { fastify } from "fastify";
+import { fastifyConnectPlugin } from "@connectrpc/connect-fastify";
+import routes from "./grpc/connect";
+
 //For env File
 dotenv.config();
 
@@ -64,6 +68,21 @@ app.use((
   return res.status(status).json({ error: err.message });
 });
 
-app.listen({ port: port() }, () =>
-  logger.info(`Server ready at http://localhost:${port()}`)
-);
+async function main() {
+  const server = fastify(
+    {
+      http2: true,
+    }
+  );
+  await server.register(fastifyConnectPlugin, {
+    routes,
+  });
+  server.get("/", (_, reply) => {
+    reply.type("text/plain");
+    reply.send("Hello World!");
+  });
+  await server.listen({ host: "0.0.0.0", port: port() });
+  logger.info("server is listening at", server.addresses());
+}
+
+void main();
