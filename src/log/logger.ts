@@ -1,8 +1,5 @@
-import { sys } from 'typescript';
 import { createLogger, format, transports, config } from 'winston';
 import { consoleFormat } from 'winston-console-format';
-
-const isDev = process.env.NODE_ENV !== 'production';
 
 const levels = {
     error: 0,
@@ -45,14 +42,5 @@ const logger = createLogger({
         }),
     ],
 });
-
-// TODO: HTTP level logger configuration
-/*logger.add(new winston.transports.Console({ // TODO: replace with HTTP transport
-    level: 'http',
-    format: combine(
-        timestamp({ format: 'DD.MM.YYYY HH:mm:ss.SSS' }),
-        json()
-    ),
-}));*/
 
 export default logger;

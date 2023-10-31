@@ -1,10 +1,10 @@
 import { Code, ConnectError, ConnectRouter } from "@connectrpc/connect";
-import { AuthService } from "./defs/auth_connect";
+import { AuthService } from "./defs/proto/com/qapp/cerberus/cerberus_connect";
 import { comparePassword, hashPassword } from "@src/util/passwordUtil";
 import UserService from "@src/service/UserService";
 import { generateToken } from "@src/util/tokenUtil";
 import { verifyGoogleToken } from "@src/service/oauth/GoogleAuthService";
-import { LoginResponse, RegisterResponse } from "./defs/auth_pb";
+import { LoginResponse, RegisterResponse } from "./defs/proto/com/qapp/cerberus/cerberus_pb";
 import logger from "@src/log/logger";
 
 export default (router: ConnectRouter) =>
