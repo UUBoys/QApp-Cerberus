@@ -1,4 +1,4 @@
-import { ConnectError, ConnectRouter } from "@connectrpc/connect";
+import { Code, ConnectError, ConnectRouter } from "@connectrpc/connect";
 import { AuthService } from "./defs/auth_connect";
 import { comparePassword, hashPassword } from "@src/util/passwordUtil";
 import UserService from "@src/service/UserService";
@@ -21,6 +21,11 @@ export default (router: ConnectRouter) =>
             role: "USER",
             firstName: "",
             lastName: "",
+        }).catch(e => {
+            if(e.code === 'P2002') {
+                throw new ConnectError('User already exists', Code.AlreadyExists);
+            }
+            throw new ConnectError('Failed to create user', Code.Internal);
         });
 
         const token = generateToken({
@@ -41,14 +46,14 @@ export default (router: ConnectRouter) =>
         const user = await UserService.getUserByEmail(email);
 
         if(!user) {
-            throw new ConnectError('User not found');
+            throw new ConnectError('User not found', Code.NotFound);
         }
 
         // Check if password is correct or there is a password on the user
         const isCorrectPassword = user.password ? await comparePassword(password, user.password) : false;
 
         if(!isCorrectPassword) {
-            throw new ConnectError('Incorrect password');
+            throw new ConnectError('Incorrect password', Code.Unauthenticated);
         }
 
         const token = generateToken({
@@ -67,11 +72,11 @@ export default (router: ConnectRouter) =>
 
         const payload = await verifyGoogleToken(idToken).catch(e => {
             logger.error(e);
-            throw new ConnectError('Google token is invalid or expired');
+            throw new ConnectError('Google token is invalid or expired', Code.Unauthenticated);
         });
 
         if(payload?.email_verified !== true || !payload?.email) {
-            throw new ConnectError('Google token is missing email or not verified (missing scopes)');
+            throw new ConnectError('Google token is missing email or not verified (missing scopes)', Code.InvalidArgument);
         }
 
         const email = payload.email;

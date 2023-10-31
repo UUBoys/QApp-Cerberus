@@ -1,10 +1,23 @@
-import { createLogger, format, transports } from 'winston';
+import { sys } from 'typescript';
+import { createLogger, format, transports, config } from 'winston';
 import { consoleFormat } from 'winston-console-format';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
+const levels = {
+    error: 0,
+    warn: 1,
+    info: 2,
+    http: 3,
+    debug: 4,
+    silly: 5,
+    trace: 6,
+    fatal: 7,
+};
+
 // Base logger configuration
 const logger = createLogger({
+    levels,
     level: 'silly', // top-level of severity
     format: format.combine(
         format.timestamp({ format: 'DD.MM.YYYY HH:mm:ss.SSS A' }),
