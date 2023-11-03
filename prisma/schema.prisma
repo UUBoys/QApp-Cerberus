@@ -19,6 +19,7 @@ model User {
   firstName String
   lastName  String
   password  String?
+  userImage String?
   role      Role
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

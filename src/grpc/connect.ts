@@ -6,6 +6,7 @@ import { generateToken } from "@src/util/tokenUtil";
 import { verifyGoogleToken } from "@src/service/oauth/GoogleAuthService";
 import { LoginResponse, RegisterResponse } from "./defs/proto/com/qapp/cerberus/cerberus_pb";
 import logger from "@src/log/logger";
+import { Role } from "@prisma/client";
 
 export default (router: ConnectRouter) =>
   router.service(AuthService, {
@@ -94,6 +95,7 @@ export default (router: ConnectRouter) =>
                 lastName: lastName ?? '',
                 password: '',
                 role: "USER",
+                userImage: payload.picture,
             });
         }
 
@@ -107,5 +109,56 @@ export default (router: ConnectRouter) =>
         });
 
         return new LoginResponse({ token });
-    }
+    },
+    async getUserData(request) {
+        const { userId } = request;
+
+        const user = await UserService.getUserById(userId);
+
+        if(!user) {
+            throw new ConnectError('User not found', Code.NotFound);
+        }
+
+        return {
+            username: user.username,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+            userImage: user.userImage ?? undefined,
+        };
+    },
+    async updateUserData(request) {
+        const { userId, username, email, firstName, lastName, userImage, password, role } = request;
+
+        const user = await UserService.getUserById(userId);
+
+        if(!user) {
+            throw new ConnectError('User not found', Code.NotFound);
+        }
+
+        // validate role
+        if(role && !Object.values(Role).includes(role as Role)) {
+            throw new ConnectError('Invalid role', Code.InvalidArgument);
+        }
+
+        const updatedUser = await UserService.updateUser(userId, {
+            username: username ?? undefined,
+            email: email ?? undefined,
+            firstName: firstName ?? undefined,
+            lastName: lastName ?? undefined,
+            userImage: userImage ?? undefined,
+            password: password ? await hashPassword(password) : undefined,
+            role: role as Role ?? undefined,
+        });
+
+        return {
+            username: updatedUser.username,
+            email: updatedUser.email,
+            firstName: updatedUser.firstName,
+            lastName: updatedUser.lastName,
+            role: updatedUser.role,
+            userImage: updatedUser.userImage ?? undefined,
+        }
+    },
   });

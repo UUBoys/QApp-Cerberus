@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { GoogleLoginRequest, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from "./cerberus_pb";
+import { GetUserDataRequest, GetUserDataResponse, GoogleLoginRequest, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, UpdateUserDataRequest, UpdateUserDataResponse } from "./cerberus_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -37,6 +37,24 @@ export const AuthService = {
       name: "GoogleOAuthLogin",
       I: GoogleLoginRequest,
       O: LoginResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc com.qapp.cerberus.AuthService.GetUserData
+     */
+    getUserData: {
+      name: "GetUserData",
+      I: GetUserDataRequest,
+      O: GetUserDataResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc com.qapp.cerberus.AuthService.UpdateUserData
+     */
+    updateUserData: {
+      name: "UpdateUserData",
+      I: UpdateUserDataRequest,
+      O: UpdateUserDataResponse,
       kind: MethodKind.Unary,
     },
   }
