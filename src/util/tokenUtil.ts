@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 interface JWTPayload {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     email: string;

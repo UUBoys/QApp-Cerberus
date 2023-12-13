@@ -84,6 +84,7 @@ export default (router: ConnectRouter) =>
         const username = payload.name;
         const firstName = payload.given_name;
         const lastName = payload.family_name;
+        const userImage = payload.picture
 
         let user = await UserService.getUserByEmail(email);
 
@@ -95,7 +96,7 @@ export default (router: ConnectRouter) =>
                 lastName: lastName ?? '',
                 password: '',
                 role: "USER",
-                userImage: payload.picture,
+                userImage: userImage ?? undefined,
             });
         }
 
@@ -129,17 +130,12 @@ export default (router: ConnectRouter) =>
         };
     },
     async updateUserData(request) {
-        const { userId, username, email, firstName, lastName, userImage, password, role } = request;
+        const { userId, username, email, firstName, lastName, userImage, password } = request;
 
         const user = await UserService.getUserById(userId);
 
         if(!user) {
             throw new ConnectError('User not found', Code.NotFound);
-        }
-
-        // validate role
-        if(role && !Object.values(Role).includes(role as Role)) {
-            throw new ConnectError('Invalid role', Code.InvalidArgument);
         }
 
         const updatedUser = await UserService.updateUser(userId, {
@@ -148,8 +144,7 @@ export default (router: ConnectRouter) =>
             firstName: firstName ?? undefined,
             lastName: lastName ?? undefined,
             userImage: userImage ?? undefined,
-            password: password ? await hashPassword(password) : undefined,
-            role: role as Role ?? undefined,
+            password: password ? await hashPassword(password) : undefined
         });
 
         return {

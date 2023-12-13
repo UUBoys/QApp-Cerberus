@@ -18,7 +18,6 @@ interface IUpdateUserParams {
     firstName?: string
     lastName?: string
     password?: string,
-    role?: UserRole,
     userImage?: string,
 }
 
@@ -36,7 +35,7 @@ const getUserByEmail = async (email: string) => {
     });
 };
 
-const getUserById = async (id: number) => {
+const getUserById = async (id: string) => {
     return await prisma.user.findUnique({
         where: {
             id,
@@ -52,7 +51,7 @@ const getUserById = async (id: number) => {
     });
 }
 
-const updateUser = async (id: number, user: IUpdateUserParams) => {
+const updateUser = async (id: string, user: IUpdateUserParams) => {
     return await prisma.user.update({
         where: {
             id,
